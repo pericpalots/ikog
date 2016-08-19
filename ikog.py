@@ -15,6 +15,7 @@ cfgEditorPosix = "vim,nano,pico,emacs"
 cfgShortcuts = ['', '', '', '', '', '', '', '', '', '']
 cfgAbbreviations = {}
 cfgPAbbreviations = {}
+cfgDefaultArchiveFileName = "ikog.archive.dat"
 #!<^CODE
 import sys
 import os
