@@ -11,7 +11,7 @@ cfgAutoSave = True
 cfgReviewMode = True
 cfgSysCalls = False
 cfgEditorNt = "edit"
-cfgEditorPosix = "nano,pico,vim,emacs"
+cfgEditorPosix = "vim,nano,pico,emacs"
 cfgShortcuts = ['', '', '', '', '', '', '', '', '', '']
 cfgAbbreviations = {}
 cfgPAbbreviations = {}
@@ -86,7 +86,7 @@ banner = [
 
 
 magicTag = "#!<^"
-gMaxLen = 80
+gMaxLen = int(os.popen('stty size', 'r').read().split()[1])
 try:
     ruler   = "~".ljust(gMaxLen - 1, "~")
     divider = "_".ljust(gMaxLen - 1, "_")
@@ -197,24 +197,25 @@ class WordWrapper:
 class ColorCoder:
     NONE = -1
     ANSI = 0
-    codes = [{"normal":"\x1b[0;37;40m",
-            "title":"\x1b[1;32;40m",
-            "heading":"\x1b[1;35;40m",
-            "bold":"\x1b[1;35;40m",
-            "important":"\x1b[1;31;40m",
-            "error":"\x1b[1;31;40m",
-            "reverse":"\x1b[0;7m",
-            "row0":"\x1b[0;35;40m",
-            "row1":"\x1b[0;36;40m"},
-            {"normal":"\x1b[0;37m",
-            "title":"\x1b[1;32m",
-            "heading":"\x1b[1;35m",
-            "bold":"\x1b[1;35m",
+
+    codes = [{"normal" :"\x1b[0;37m",
+            "title"    :"\x1b[1;32m",
+            "heading"  :"\x1b[1;35m",
+            "bold"     :"\x1b[1;35m",
             "important":"\x1b[1;31m",
-            "error":"\x1b[1;31m",
-            "reverse":"\x1b[0;7m",
-            "row0":"\x1b[0;35m",
-            "row1":"\x1b[0;36m"}]
+            "error"    :"\x1b[1;31m",
+            "reverse"  :"\x1b[0;7m",
+            "row0"     :"\x1b[1;36m",
+            "row1"     :"\x1b[0;36m"},
+            {"normal"  :"\x1b[0;37m",
+            "title"    :"\x1b[1;32m",
+            "heading"  :"\x1b[1;35m",
+            "bold"     :"\x1b[1;35m",
+            "important":"\x1b[1;31m",
+            "error"    :"\x1b[1;31m",
+            "reverse"  :"\x1b[0;7m",
+            "row0"     :"\x1b[1;36m",
+            "row1"     :"\x1b[0;36m"}]
 
     def __init__(self, codeset):
         self.codeSet = self.NONE
@@ -696,7 +697,7 @@ class TodoList:
     "!CMD command          2                     ABBREV/AB @x @full",
     "ABBREV/AB ?           PAB ?                 PAB :px :pfull",
     "SHORTCUT/SC N cmd     SHORTCUT/SC ?         =N",
-    "ARCHIVE/DONE N [text]",
+    "ARCHIVE/DONE N [text] OPENARCHIVE/OA",
     ]
 
     help = [ "",
@@ -770,6 +771,7 @@ class TodoList:
     "KILL/K/X/- N       : kill (delete) task N. You must define N",
     "DONE N [text]      : Remove task N and move to an archive file",
     "ARCHIVE N [text]   : Same as DONE",
+    "OPENARCHIVE        : Opens the default archive file",
     "CLEAR              : Remove all tasks",
     "!PAUSE!",
     "DISPLAY COMMANDS",
@@ -1163,6 +1165,8 @@ class TodoList:
         elif cmd == "cfgPAbbreviations":
             abbrs = eval(params[1].strip())
             globalPAbbr.setAbbreviations(abbrs)
+        elif cmd == "cfgDefaultArchiveFileName":
+            global cfgDefaultArchiveFileName
         else:
             self.showError("Unrecognised command "  + cmd)
 
@@ -1376,6 +1380,13 @@ class TodoList:
                     self.forceSave("")
                 done = True
                 printCurrent = False
+            elif command == "OPENARCHIVE" or command == "OA":
+                filename = self.makeFilename(cfgDefaultArchiveFileName)
+                reopen = filename
+                if self.dirty:
+                    self.forceSave("")
+                done = True
+                printCurrent = False
             elif command == "AUTOSAVE" or command == "AS":
                 if line== "":
                     self.showError("You must enter ON or OFF for the autosave command")
@@ -1571,7 +1582,7 @@ class TodoList:
 
     def writeArchive(self, item):
         success = False
-        filename = self.filename + ".archive.dat"
+        filename = cfgDefaultArchiveFileName
         try:
             if not os.path.exists(filename):
                 f = open(filename,"wb")
@@ -1668,8 +1679,9 @@ class TodoList:
             f.write("cfgEditorNt = \"" + cfgEditorNt + "\"\n")
             f.write("cfgEditorPosix = \"" + cfgEditorPosix + "\"\n")
             f.write("cfgShortcuts = " + str(self.shortcuts) + "\n")
-            f.write("cfgAbbreviations = " +str(globalAbbr.toString()) +"\n")
-            f.write("cfgPAbbreviations = " +str(globalPAbbr.toString()) +"\n")
+            f.write("cfgAbbreviations = " +str(globalAbbr.toString()) + "\n")
+            f.write("cfgPAbbreviations = " +str(globalPAbbr.toString()) + "\n")
+            f.write("cfgDefaultArchiveFileName= " + cfgDefaultArchiveFileName + "\n")
             f.write(magicTag + "CODE\n")
             for codeline in self.code:
                 f.write(codeline.rstrip())
