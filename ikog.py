@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Run the script for details of the licence
 # or refer to the notice section later in the file.
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #!<^DATA
 #!<^CONFIG
 cfgColor = 0
@@ -13,9 +13,9 @@ cfgSysCalls = False
 cfgEditorNt = "edit"
 cfgEditorPosix = "vim,nano,pico,emacs"
 cfgShortcuts = ['', '', '', '', '', '', '', '', '', '']
-cfgAbbreviations = {}
+cfgAbbreviations = {'@C': '@Computer', '@A': '@Anywhere', '@Pw': '@Password', '@D': '@Desk', '@E': '@Errands', '@H': '@Home', '@I': '@Internet', '@N': '@Next', '@O': '@Other', '@L': '@Lunch', '@M': '@Meeting', '@S': '@Someday/Maybe', '@P': '@Phone', '@W': '@Work', '@W4': '@Waiting_For'}
 cfgPAbbreviations = {}
-cfgDefaultArchiveFileName = "ikog.archive.dat"
+cfgDefaultArchiveFileName= "ikog.archive.dat"
 #!<^CODE
 import sys
 import os
@@ -206,8 +206,12 @@ class ColorCoder:
             "important":"\x1b[1;31m",
             "error"    :"\x1b[1;31m",
             "reverse"  :"\x1b[0;7m",
-            "row0"     :"\x1b[1;36m",
-            "row1"     :"\x1b[0;36m"},
+            "date"     :"\x1b[1;32m",
+            "created"  :"\x1b[1;31m",
+            "project"  :"\x1b[1;33m",
+            "action"   :"\x1b[1;36m",
+            "row0"     :"\x1b[1;32m",
+            "row1"     :"\x1b[0;32m"},
             {"normal"  :"\x1b[0;37m",
             "title"    :"\x1b[1;32m",
             "heading"  :"\x1b[1;35m",
@@ -215,8 +219,12 @@ class ColorCoder:
             "important":"\x1b[1;31m",
             "error"    :"\x1b[1;31m",
             "reverse"  :"\x1b[0;7m",
-            "row0"     :"\x1b[1;36m",
-            "row1"     :"\x1b[0;36m"}]
+            "date"     :"\x1b[1;32m",
+            "created"  :"\x1b[1;31m",
+            "project"  :"\x1b[1;33m",
+            "action"   :"\x1b[1;36m",
+            "row0"     :"\x1b[1;32m",
+            "row1"     :"\x1b[0;32m"}]
 
     def __init__(self, codeset):
         self.codeSet = self.NONE
@@ -1682,7 +1690,7 @@ class TodoList:
             f.write("cfgShortcuts = " + str(self.shortcuts) + "\n")
             f.write("cfgAbbreviations = " +str(globalAbbr.toString()) + "\n")
             f.write("cfgPAbbreviations = " +str(globalPAbbr.toString()) + "\n")
-            f.write("cfgDefaultArchiveFileName= " + cfgDefaultArchiveFileName + "\n")
+            f.write("cfgDefaultArchiveFileName= \"" + cfgDefaultArchiveFileName + "\"\n")
             f.write(magicTag + "CODE\n")
             for codeline in self.code:
                 f.write(codeline.rstrip())
@@ -1817,7 +1825,7 @@ class TodoList:
             if indexStr == "^" or indexStr.upper() == "THIS":
                 doit = True
             else:
-                print "Are you sure you want to archive: ' " + self.todo[index].toStringSimple() + "'"
+                print "Are you sure you want to archive: ' " + self.todo[index].toStringSimple(True) + "'"
                 if safeRawInput("Enter Yes to archive this task? >>>").upper() == "YES":
                     doit = True
             if doit:
@@ -1844,7 +1852,7 @@ class TodoList:
             if indexStr == "^" or indexStr.upper() == "THIS":
                 doit = True
             else:
-                print "Are you sure you want to remove ' " + self.todo[index].toStringSimple() + "'"
+                print "Are you sure you want to remove ' " + self.todo[index].toStringSimple(True) + "'"
                 if safeRawInput("Enter Yes to delete this task? >>>").upper() == "YES":
                     doit = True
             if doit:
@@ -1995,7 +2003,7 @@ class TodoList:
             nlines = 1
         else:
             wrapper = WordWrapper(gMaxLen)
-            scrnline = wrapper.wrap("[%02d] %s" % (index, self.todo[index].toStringSimple()))
+            scrnline = wrapper.wrap("[%02d] %s" % (index, self.todo[index].toStringSimple(True, colorType)))
             if colorType == "row0":
                 style = "class=\"evenTask\""
             else:
@@ -2783,27 +2791,44 @@ class  TodoItem:
             password = ec.getKey()
         return (password, entry.strip())
 
-    def toStringSimple(self):
+    def toStringSimple(self, colorize = False, lastColor = "row0"):
         entry = ""
         if self.when != "":
-            entry = entry + "@Date " + self.when + " "
+            date = "@Date " + self.when;
+            if (colorize):
+                entry = gColor.code("date") + entry + gColor.code(lastColor)
+            else:
+                entry = entry + date + " "
+                
         entry = entry + "%s #%d" % (self.task, self.getPriority())
         if self.hiddenTask != "":
             entry = entry + " <*** " + Encryptor().getSecurityClass(self.hiddenTask) + " ***> "
         if len(self.actions) > 0:
             for action in self.actions:
-                entry = entry + " " + action
+                if (colorize):
+                    entry = entry + " " + gColor.code("action") + action + gColor.code(lastColor)
+                else:
+                    entry = entry + " " + action
         if len(self.projects) > 0:
             first = True
             for project in self.projects:
                 # skip the none tag
                 if project != "None":
                     if first:
-                        entry = entry + " Projects: " + project
+                        if colorize:
+                            entry = entry + gColor.code("project") + " " + project + gColor.code(lastColor)
+                        else:
+                            entry = entry + " Projects: " + project
                         first = False
                     else:
-                        entry = entry + ", " + project
-        entry = entry + " [" + self.created + "]"
+                        if colorize:
+                            entry = entry + ", " + gColor.code("project") + project + gColor.code(lastColor)
+                        else:
+                            entry = entry + ", " + project
+        if colorize:
+            entry = entry + " " + gColor.code("created") + self.created + gColor.code(lastColor)
+        else:
+            entry = entry + " [" + self.created + "]"
         return entry
 
     def toStringVerbose(self):
