@@ -27,3 +27,9 @@ This is work in progress, but I use it on my machine regularly :)
 PS: note that some features are still not completely available.
 Due to some code changes, completion and help is available only for a small
 subset of commands
+
+
+NixLAB is planning to:
+ * Make code run with python3
+ * Clean up code so it's somewhat maintainable
+ * Add git support, so files resides in git repo so that they are always available across systems
