@@ -1623,11 +1623,11 @@ class TodoList:
         filename = cfgDefaultArchiveFileName
         try:
             if not os.path.exists(filename):
-                f = open(filename,"wb")
+                f = open(filename,"w")
                 f.write("# " + notice[0] + "\n")
                 f.write(magicTag + "DATA\n")
             else:
-                f = open(filename,"a+b")
+                f = open(filename,"a+")
 
             f.write(item.toString())
             f.write("\n")
@@ -1641,7 +1641,7 @@ class TodoList:
     def exportTasks(self):
         filename = self.filename + ".tasks.txt"
         try:
-            f = open(filename,"wb")
+            f = open(filename,"w")
             f.write("# " + notice[0] + "\n")
             f.write(magicTag + "DATA\n")
             for item in self.todo:
@@ -1675,7 +1675,7 @@ class TodoList:
             self.showError("Sorry but " + filename + " already exists.")
         else:
             try:
-                f = open(filename, "wb")
+                f = open(filename, "w")
                 f.write("#!/usr/bin/env python\n")
                 f.write("#" + ruler + "\n")
                 f.close()
@@ -1698,7 +1698,7 @@ class TodoList:
         backupFilename = filename + ".bak"
         success = False
         try:
-            f = open(tmpFilename,"wb")
+            f = open(tmpFilename,"w")
             f.write("#!/usr/bin/env python\n")
             f.write("# -*- coding: utf-8 -*-\n")
             f.write("#" + ruler + "\n")
@@ -2828,7 +2828,7 @@ class  TodoItem:
                 entry = gColor.code("date") + entry + gColor.code(lastColor)
             else:
                 entry = entry + date + " "
-                
+
         entry = entry + "%s #%d" % (self.task, self.getPriority())
         if self.hiddenTask != "":
             entry = entry + " <*** " + Encryptor().getSecurityClass(self.hiddenTask) + " ***> "
