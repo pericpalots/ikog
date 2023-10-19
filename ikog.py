@@ -6,7 +6,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #!<^DATA
 #!<^CONFIG
-cfgColor = 0
+cfgColor = 1
 cfgAutoSave = True
 cfgReviewMode = True
 cfgSysCalls = False
@@ -199,32 +199,61 @@ class ColorCoder:
     NONE = -1
     ANSI = 0
 
-    codes = [{"normal" :"\x1b[0;37m",
-            "title"    :"\x1b[1;32m",
-            "heading"  :"\x1b[1;35m",
-            "bold"     :"\x1b[1;35m",
-            "important":"\x1b[1;31m",
-            "error"    :"\x1b[1;31m",
-            "reverse"  :"\x1b[0;7m",
-            "date"     :"\x1b[1;32m",
-            "created"  :"\x1b[1;31m",
-            "project"  :"\x1b[1;33m",
-            "action"   :"\x1b[1;36m",
-            "row0"     :"\x1b[1;32m",
-            "row1"     :"\x1b[0;32m"},
-            {"normal"  :"\x1b[0;37m",
-            "title"    :"\x1b[1;32m",
-            "heading"  :"\x1b[1;35m",
-            "bold"     :"\x1b[1;35m",
-            "important":"\x1b[1;31m",
-            "error"    :"\x1b[1;31m",
-            "reverse"  :"\x1b[0;7m",
-            "date"     :"\x1b[1;32m",
-            "created"  :"\x1b[1;31m",
-            "project"  :"\x1b[1;33m",
-            "action"   :"\x1b[1;36m",
-            "row0"     :"\x1b[1;32m",
-            "row1"     :"\x1b[0;32m"}]
+##    codes = [{"normal" :"\x1b[0;37m",
+##            "title"    :"\x1b[1;32m",
+##            "heading"  :"\x1b[1;35m",
+##            "bold"     :"\x1b[1;35m",
+##            "important":"\x1b[1;31m",
+##            "error"    :"\x1b[1;31m",
+##            "reverse"  :"\x1b[0;7m",
+##            "date"     :"\x1b[1;32m",
+##            "created"  :"\x1b[1;31m",
+##            "project"  :"\x1b[1;33m",
+##            "action"   :"\x1b[1;36m",
+##            "row0"     :"\x1b[1;32m",
+##            "row1"     :"\x1b[0;32m"},
+##            {"normal"  :"\x1b[0;37m",
+##            "title"    :"\x1b[1;32m",
+##            "heading"  :"\x1b[1;35m",
+##            "bold"     :"\x1b[1;35m",
+##            "important":"\x1b[1;31m",
+##            "error"    :"\x1b[1;31m",
+##            "reverse"  :"\x1b[0;7m",
+##            "date"     :"\x1b[1;32m",
+##            "created"  :"\x1b[1;31m",
+##            "project"  :"\x1b[1;33m",
+##            "action"   :"\x1b[1;36m",
+##            "row0"     :"\x1b[1;32m",
+##            "row1"     :"\x1b[0;32m"}]
+
+    ##codes = [{"normal":"\x1b[0;36;40m", ##
+    codes = [{"normal":"\x1b[0;37m", ##
+             "title":"\x1b[0;32;40m",	##
+             "heading":"\x1b[1;35;40m",
+             "bold":"\x1b[1;35;40m",
+             "important":"\x1b[1;31;40m",
+             "error":"\x1b[1;31;40m",
+             "reverse":"\x1b[0;7m",
+             "date"     :"\x1b[1;32m",
+             "created"  :"\x1b[1;31m",
+             "project"  :"\x1b[1;33m",
+             "action"   :"\x1b[1;36m",
+             "row0":"\x1b[1;34;40m",
+             "row1":"\x1b[0;35;40m"}, ##
+             {"normal":"\x1b[0;36m", ##
+             "title":"\x1b[0;32m",	##
+             "heading":"\x1b[1;35m",
+             "bold":"\x1b[1;35m",
+             "important":"\x1b[1;31m",
+             "error":"\x1b[1;31m",
+             "reverse":"\x1b[0;7m",
+             "date"     :"\x1b[1;32m",
+             "created"  :"\x1b[1;31m",
+             "project"  :"\x1b[1;33m",
+             "action"   :"\x1b[1;36m",
+             "row0":"\x1b[1;34m",
+             "row1":"\x1b[0;34m"}] ##
+
 
     def __init__(self, codeset):
         self.codeSet = self.NONE
