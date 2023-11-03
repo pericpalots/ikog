@@ -698,7 +698,7 @@ class EdCommand(BaseCommand):
             todo.showError("External editing needs to use system calls.  Use SYS ON to enable them.")
         elif line == "":
             todo.addTaskExternal()
-        elif todo.modifyTask(line, TodoItem.MODIFY, externalEditor = True):
+        elif todo.modifyTask(line, TodoItem.REPLACE, externalEditor = True):
             todo.sortByPriority()
             todo.save("")
         else:
