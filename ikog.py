@@ -2516,9 +2516,9 @@ class  TodoItem:
         self.when = ""
         self.created = date.today().isoformat()
         self.error = ""
-        self.autoAction = False
-        self.autoProject = False
-        self.nullDate = False
+        self.autoAction = False     # Action has been automatically inserted?
+        self.autoProject = False    # Project has been automatically inserted?
+        self.nullDate = False       # is 'when' a null date?
         self.parse(line, password)
 
     def makeSafeDate(self, year, month, day):
@@ -2667,10 +2667,10 @@ class  TodoItem:
 
         if len(self.actions) == 0:
             self.actions.append("@Anywhere")
-        self.autoAction = True
+            self.autoAction = True
         if len(self.projects) == 0:
             self.projects.append("None")
-        self.autoProject = True
+            self.autoProject = True
 
     def addError(self, err):
         if len(self.error) > 0:
